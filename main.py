@@ -1,6 +1,9 @@
 #this represents the data that would be stored on the actual hard drive for example
 physical_disk = {
-    0x10000001: 0xFF00FFFF # For now all of our data will be exactly one word long
+    0x11010101: 0xFF00e0FF,
+    0x10000001: 0xFF00FFFF, # For now all of our data will be exactly one word long
+    0x10020001: 0xFF0000FF # For now all of our data will be exactly one word long
+
 }
 
 def print_disk_content(disk):
@@ -33,8 +36,9 @@ def load_from_disk(addr,cache):
             cache[idx >> 5][2][i] = val
         else:
             cache[idx >> 5][2][i] = 0xFFFFFFFF
-    cache[idx][0] = 1 # set the valid bit
-    cache[idx][1] = tag >> (5 + 7) # set the tag
+
+    cache[idx>>5][0] = 1 # set the valid bit
+    cache[idx>>5][1] = tag >> (5 + 7) # set the tag
 
 
 def load(addr, cache):
@@ -92,4 +96,6 @@ print("---------Loading data from cache-----------")
 print("Loading data from addr: ",format(testAddr,"#02x"))
 print("Data loaded:",format(load(testAddr,cache),"#02x"))
 print("Data loaded:",format(load(testAddr,cache),"#02x"))
-print("Data loaded:",format(load(testAddr,cache),"#02x"))
+print("Data loaded from diff addr:",format(load(0x11010101,cache),"#02x"))
+print("Data loaded from different addr:",format(load(0x10020001,cache),"#02x")) # this is in the same block, so it has to dump the cache and reload data
+print_cache(cache)
